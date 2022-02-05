@@ -1,3 +1,4 @@
+const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 
@@ -12,10 +13,11 @@ const session = require("cookie-session");
 // mongo dB client/connection setup
 const dbo = require('./db/dbConn')
 dbo.connectToServer(function (err) {
-  if (err) console.error(chalk.red(err));
+  if (err) console.log(chalk.red(err));
 })
 
 const usersRoutes = require("./routes/usersRoutes");
+const debugRoutes = require("./routes/debugRoutes");
 
 module.exports = function application(API) {
 
@@ -25,22 +27,14 @@ module.exports = function application(API) {
   }));
 
   app.use(morgan("dev"));
-  app.use(express.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: true}));
 
-  app.use('/api', usersRoutes(router));
+  app.use('/api', usersRoutes(router, dbo));
+  app.use('/api/debug', debugRoutes(router, dbo, API));
 
   app.get("/", (req, res) => {
     res.json({ msg: 'hello world' });
-  });
-
-  app.get("/help", (req, res) => {
-    const endpoints = {
-      1: { method: 'GET', route: '/api/login', description: 'check for logged user' },
-      2: { method: 'POST', route: '/api/login', description: 'user login authentication' },
-      3: { method: 'GET', route: '/api/register', description: 'new user registeration form' },
-      4: { method: 'POST', route: '/api/register', description: 'register new user' },
-    };
-    res.json({ api: API.NAME, version: API.VERSION, endpoints });
   });
 
   app.close = () => {
