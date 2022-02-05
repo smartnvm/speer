@@ -1,0 +1,35 @@
+{
+  "name": "speer-api",
+  "version": "1.0.0",
+  "description": "Twitter Clone API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "local": "./node_modules/.bin/nodemon -L --ignore public/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartnvm/speer.git"
+  },
+  "homepage": "https://github.com/smartnvm/speer#readme",
+  "keywords": [
+    "twitter api", "back-end challenge"
+  ],
+  "author": "AJ",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "cookie-session": "^1.4.0",
+    "bcryptjs": "^2.4.3",
+    "path": "^0.12.7",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "chalk": "^4.1.2",
+    "nodemon": "^2.0.15"
+  }
+}
