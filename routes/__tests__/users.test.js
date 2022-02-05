@@ -1,9 +1,8 @@
 const request = require("supertest");
 const should = require("should");
-
-const testUsers = require("../../db/data/users/users");
 const generateApp = require("../../application");
 
+const usersdB = require("../../db/test_data/users/users");
 
 describe("----------[Test Users Routes]------------", () => {
   let app;
@@ -28,17 +27,21 @@ describe("----------[Test Users Routes]------------", () => {
     done();
   });
 
-  test("GET /api/login", function (done) {
+  test("POST /api/login", function (done) {
+    const user = {
+      username: "aj@smartnvm.com",
+      password: "password",
+    };
+
     request(app)
-      .get("/api/login")
+      .post("/api/login")
+      .send(user)
       .expect(200)
       .end(function (err, res) {
-        const { id, name, email, hash } = res.body;
-        id.should.equal(testUsers[0].id);
-        name.should.equal(testUsers[0].name);
-        email.should.equal(testUsers[0].email);
-        hash.should.equal(testUsers[0].hash);
+        const { auth } = res.body;
+        auth.should.equal(true);
         done();
       });
+    })
+
   });
-});
