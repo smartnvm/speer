@@ -1,24 +1,15 @@
 
-const bcrypt = require('bcrypt')
-
 const testUsersdB = require("../db/test_data/users/users");
 const db = require('../database');
 
-async function authenticateUser(username, password, testUsersdB) {
-  if (testUsersdB[username]) {
-    const hashMatch = await bcrypt.compare(password, testUsersdB[username].hash);
-    const match = password === testUsersdB[username].password
-    return match;
-  }
-  return false;
-}
+const {authenticateUser , createUser} = require('../utils/utils')
 
 
 module.exports = (router, dbo) => {
 
   router.get("/login", (req, res) => {
     //check if we are already logged in
-    const userId = req.session.username;
+    const userId = req.session.userid;
     console.log("session username:", userId);
     if (!userId) {
       return res.json({ err: 401, msg: "user not logged in" });
@@ -29,19 +20,69 @@ module.exports = (router, dbo) => {
 
   router.post("/login", (req, res) => {
     const { username, password } = req.body;
-    return authenticateUser(username, password, testUsersdB)
-      .then(auth => {
-        auth ? req.session.username = username : req.session.username = null
-        console.log('------[auth?]---------\n', req.session.username)
-        return res.json({ auth, session: req.session });
+    console.log(username, password)
+
+    const database = dbo.getDb()
+    database
+      .collection("users")
+      .find({ username })
+      .toArray((err, dbRes) => {
+        if (err) throw err;
+        const user = dbRes[0]
+        if (!user) {
+          console.log({ cod: 404, auth: false, msg: `user ${username} not found` })
+          res.json({ cod: 404, auth:false, msg: `user ${username} not found` });
+          return
+        }
+
+        authenticateUser(password, user)
+          .then(auth => {
+            //create session cookie
+
+            if (!auth) {
+              req.session.userid = null
+              return res.json({ cod: 403, auth, msg: 'incorrect password' });
+            }
+
+            req.session.userid = user._id
+            console.log('------[auth?]---------\n', req.session.userid)
+            return res.json({ cod: 200, auth, msg: `hello ${user.username}` });
+          })
+      })
+
+  })
+
+  router.post("/register", (req, res) => {
+    const database = dbo.getDb()
+    const { username, password } = req.body;
+
+    console.log(username)
+
+    database
+      .collection("users")
+      .find({ username })
+      .toArray((err, dbRes) => {
+        if (err) throw err;
+        const user = dbRes[0]
+        if (user) {
+          console.log('error: user already exisit')
+          res.json({ cod: 400, msg: `error user ${user.username} already exists` })
+          return
+        }
+
+        console.log({ cod: 200, msg: `Hello, ${username}` })
+        createUser(username, password)
+          .then(newUser => {
+            database.collection("users").insertOne(newUser);
+            console.log('.......create user.........\n', newUser);
+            res.json({ code: 200, newUser });
+          })
       })
   });
 
-  router.post("/register", (req, res) => {
-    res.json({ cod: 200, POST: '/register' });
-  });
 
 
+  //test route dB interaction
   router.get('/dbtest', (req, res) => {
     const database = dbo.getDb()
 
@@ -75,5 +116,6 @@ module.exports = (router, dbo) => {
       })
 
   })
+
   return router;
 };
