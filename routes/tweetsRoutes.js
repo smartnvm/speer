@@ -66,11 +66,13 @@ router.put("/:id", (req, res) => {
   const database = dbo.getDb()
   const tweet = { body, timestamp: new Date(Date.now()) }
 
-  database.collection("tweets").updateOne({ '_id': tweetId }, { $set: { ...tweet } })
-    .then(newTweet => {
-      if (err) throw err;
-      res.json({ cod: 200, newTweet });
+  database.collection("tweets").findOneAndUpdate(
+    { _id: ObjectId(tweetId) },
+    { $set: { ...tweet } })
+    .then( newTweet => {
+      res.json({ cod: 200, tweet:newTweet.value });
     })
+    .catch(err => console.log(err))
 
 });
 
@@ -88,7 +90,7 @@ router.delete('/:id/', (req, res) => {
   const database = dbo.getDb();
 
   //opting to archive tweets as opposed to hard delete
-  return database.collection("tweets").findOneAndUpdate(
+  database.collection("tweets").findOneAndUpdate(
     { _id: ObjectId(id) },
     { $set: { archive: true } },
     { returnOriginal: false })
@@ -96,8 +98,8 @@ router.delete('/:id/', (req, res) => {
       const dbRes = tweet.value
       console.log({ tweet: dbRes, cod: dbRes ? 200 : 400, msg: dbRes ? 'deleted' : 'not found' })
       dbRes ?
-        res.json({ tweet: tweet.value, cod: 200, msg: 'Tweet deleted!' }) :
-        res.json({ tweet: tweet.value, cod: 400, msg: 'not found' })
+        res.json({  cod: 200, msg: 'Tweet deleted!' }) :
+        res.json({  cod: 400, msg: 'Tweet not found' })
     })
     .catch(err => console.log(err))
 
