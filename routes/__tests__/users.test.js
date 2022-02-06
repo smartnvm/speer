@@ -15,7 +15,11 @@ describe("----------[Test Users Routes]------------", () => {
     await app.close();
   });
 
-  test("GET /", (done) => {
+  afterEach(async () => {
+    await request(app).post("/api/debug/db_reset");
+  });
+
+  test("Server Check: GET /", (done) => {
     request(app)
       .get("/")
       .set("Accept", "application/json")
@@ -27,7 +31,7 @@ describe("----------[Test Users Routes]------------", () => {
     done();
   });
 
-  test("POST /api/login", function (done) {
+  test("POST /api/login check valid user", function (done) {
     const user = {
       username: "aj@smartnvm.com",
       password: "password",
@@ -42,6 +46,45 @@ describe("----------[Test Users Routes]------------", () => {
         auth.should.equal(true);
         done();
       });
-    })
+  })
 
-  });
+
+  test("POST /api/login check invalid user", function (done) {
+
+    const user = {
+      username: "clement.shum@speer.com",
+      password: "password",
+    };
+
+    request(app)
+      .post("/api/login")
+      .send(user)
+      .expect(200)
+      .end(function (err, res) {
+        const { auth } = res.body;
+        auth.should.equal(false);
+        done();
+      });
+  })
+
+  test("POST /api/login check invalid password", function (done) {
+
+    const user = {
+      username: "clement.shum@speer.io",
+      password: "jfalsjfasjf",
+    };
+
+    request(app)
+      .post("/api/login")
+      .send(user)
+      .expect(200)
+      .end(function (err, res) {
+        const { auth } = res.body;
+        auth.should.equal(false);
+        done();
+      });
+  })
+
+
+
+});
