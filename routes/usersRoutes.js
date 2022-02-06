@@ -2,6 +2,7 @@
 const bcrypt = require('bcrypt')
 
 const testUsersdB = require("../db/test_data/users/users");
+const db = require('../database');
 
 async function authenticateUser(username, password, testUsersdB) {
   if (testUsersdB[username]) {
@@ -28,10 +29,11 @@ module.exports = (router, dbo) => {
 
   router.post("/login", (req, res) => {
     const { username, password } = req.body;
-    authenticateUser(username, password, testUsersdB)
+    return authenticateUser(username, password, testUsersdB)
       .then(auth => {
-        console.log('------[auth?]---------', auth)
-        return res.json({ auth });
+        auth ? req.session.username = username : req.session.username = null
+        console.log('------[auth?]---------\n', req.session.username)
+        return res.json({ auth, session: req.session });
       })
   });
 
@@ -40,6 +42,38 @@ module.exports = (router, dbo) => {
   });
 
 
+  router.get('/dbtest', (req, res) => {
+    const database = dbo.getDb()
+
+    //tried to simplify and refactor out dB logic into database.js
+    //not sure why the code below always return undefined
+    //spend too much time debugging so reverting back
+    //to working spaghetti code :(
+
+    // db.getUserWithEmail('aj@smartnvm.com',database)
+    //   .then((dbRes) => {
+    //     console.log({dbRes})
+    //     res.json({dbRes} )
+    //   })
+
+
+    username = 'aj@smartnvm.com'
+    password = 'password'
+    database
+      .collection("users")
+      .find({ username })
+      .toArray((err, dbRes) => {
+        let user = dbRes[0]
+        if (err) throw err;
+
+        if (user) {
+          console.log('error: user already exisit')
+          return res.json({ cod: 400, msg: `error user ${user.username} already exists` })
+        }
+
+       res.json({cod:200, msg:`Hello, ${username}`})
+      })
+
+  })
   return router;
 };
-
