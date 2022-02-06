@@ -2,7 +2,7 @@
 const testUsersdB = require("../db/test_data/users/users");
 const db = require('../database');
 
-const {authenticateUser , createUser} = require('../utils/utils')
+const {authenticateUser , createUser} = require('../utils/usersUtil')
 
 
 module.exports = (router, dbo) => {
