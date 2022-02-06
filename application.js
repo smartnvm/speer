@@ -28,17 +28,26 @@ module.exports = function application(API) {
     maxAge: 24 * 60 * 60 * 1000
   }));
 
+
   app.use(morgan("dev"));
   app.use(cookieParser());
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.urlencoded({ extended: true }));
 
   app.use('/api', usersRoutes(router, dbo));
   app.use('/api/tweets', tweetsRoutes(router, dbo));
   app.use('/api/debug', debugRoutes(router, dbo, API));
 
   app.get("/", (req, res) => {
-    res.json({ msg: 'hello world' });
+    res.json({
+      msg: 'hello world',
+      api: 'tweet',
+      description: 'twitter like with user Authentication / Register and Tweets CRUD for a list of api endpoints please visit info URL Please note, a user must be logged or a new user can sign up to access the API:)',
+      testUser: { username: 'aj@smartnvm.com', password: 'password' },
+      info: 'http://tweet.smartnvm.com/api/debug/help',
+      github: 'https://github.com/smartnvm/speer',
+
+    });
   });
 
   app.close = () => {
@@ -47,3 +56,4 @@ module.exports = function application(API) {
 
   return app;
 }
+

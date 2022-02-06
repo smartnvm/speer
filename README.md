@@ -1,4 +1,4 @@
-# Speer Technologies challenge
+# Tweeter
 
 a back-end twitter clone api.
 
@@ -11,31 +11,33 @@ For a complete list please refer to package.json
 
 ## Project Directory Strcture
 
-**speer**
-├── **db**
+```sh
+speer
+├── db
 │   ├── seed
-│   │   ├── tweets
-│   │   │   └── tweets.js
-│   │   └── users
-│   │       └──  users.js
+│   │   ├── users
+│   │   │   └── users.js
+│   │   └── tweets
+│   │       └── tweets.js
 │   ├── dbConn.js
 │   └── dbParams.js
-├── **routes**
-│   ├── __ tests __
-│   │   ├── tweets.test.js
-│   │   └── users.test.js
-│   ├── debugRoutes.js
-│   ├── tweetsRoutes.js
-│   └── usersRoutes.js
-├── **utils**
+├── utils
 │   └── usersUtil.js
-├── application.js
-├── database.js
+├── routes
+│   ├── __tests __
+│   │   ├── users.test.js
+│   │   └── tweets.test.js
+│   ├── debugRoutes.js
+│   ├── usersRoutes.js
+│   └── tweetsRoutes.js
 ├── index.js
+├── Requirements.md
+├── database.js
 ├── package.json
 ├── package-lock.json
-├── README.md
-└── Requirements.md
+├── application.js
+└── README.md
+```
 
 
 ## Setup
@@ -52,7 +54,7 @@ npm install
 
 ```sh
 DB_NAME=speer
-DB_PORT=27027
+DB_PORT=27017
 #DB_USER=speer
 #DB_PASS=password
 PORT=8080
@@ -90,7 +92,7 @@ _NOTE: database will reset everytime you run test_
 
 ### Debug
 
-**1. GET /api/debug/db_reset**
+**1. GET /api/debug/db_reset** 
 
 database auto reset and seed
 
@@ -107,8 +109,20 @@ database auto reset and seed
 
 
 **1. GET  /api/login**
+
 **2. POST /api/login**
+
 **3. POST /api/register**
+
+```sh
+user = {
+  username: string,
+  password: string,
+}
+```
+
+
+<br>
 
 ### CRUD: Tweets
 

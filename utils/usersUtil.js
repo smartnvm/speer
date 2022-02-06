@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt')
 
 async function authenticateUser(password, user) {
   if (user) {
-    const hashMatch = await bcrypt.compare(password, user.hash);
-    const match = password === user.password
+    const  match = await bcrypt.compare(password, user.hash);
+    //const match = password === user.password
     return match;
   }
   return false;
