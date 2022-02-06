@@ -17,6 +17,7 @@ dbo.connectToServer(function (err) {
 })
 
 const usersRoutes = require("./routes/usersRoutes");
+const tweetsRoutes = require("./routes/tweetsRoutes");
 const debugRoutes = require("./routes/debugRoutes");
 
 module.exports = function application(API) {
@@ -31,6 +32,7 @@ module.exports = function application(API) {
   app.use(bodyParser.urlencoded({extended: true}));
 
   app.use('/api', usersRoutes(router, dbo));
+  app.use('/api/tweets', tweetsRoutes(router, dbo));
   app.use('/api/debug', debugRoutes(router, dbo, API));
 
   app.get("/", (req, res) => {
