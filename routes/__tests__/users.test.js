@@ -103,7 +103,23 @@ describe("----------[Test Users Routes]------------", () => {
       });
   })
 
+  test("POST /api/register check with new user", function (done) {
 
+    const user = {
+      username: "stephanie@speer.io",
+      password: "password",
+    };
+
+    request(app)
+      .post("/api/register")
+      .send(user)
+      .expect(200)
+      .end(function (err, res) {
+        const { cod } = res.body;
+        cod.should.equal(200);
+        done();
+      });
+  })
 
 
 
