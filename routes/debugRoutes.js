@@ -16,13 +16,21 @@ module.exports = (router, dbo, API) => {
   router.get("/db_reset", (req, res) => {
     const dbConn = dbo.getDb();
     dbConn.collection("users").deleteMany({})
-    dbConn.collection("users").insertMany(testUsers)
-
-    dbConn.collection("tweets").deleteMany({})
-    dbConn.collection("tweets").insertMany(tweets)
-
-    res.json({ cod: 200, cmd: 'db_reset', testUsers, tweets })
-
+      .then(() => {
+        dbConn.collection("users").insertMany(testUsers)
+      })
+      .then(() => {
+        dbConn.collection("tweets").deleteMany({})
+      })
+      .then(() => {
+        dbConn.collection("tweets").insertMany(tweets)
+      })
+      .then(()=>{
+        res.json({ cod: 200, cmd: 'db_reset', testUsers, tweets })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   });
 
 
