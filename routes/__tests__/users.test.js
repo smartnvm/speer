@@ -15,8 +15,8 @@ describe("----------[Test Users Routes]------------", () => {
     await app.close();
   });
 
-  afterEach(async () => {
-    await request(app).post("/api/debug/db_reset");
+  beforeEach(async () => {
+    await request(app).get("/api/debug/db_reset");
   });
 
   test("Server Check: GET /", (done) => {
@@ -84,6 +84,27 @@ describe("----------[Test Users Routes]------------", () => {
         done();
       });
   })
+
+  test("POST /api/register check with existing user", function (done) {
+
+    const user = {
+      username: "clement.shum@speer.io",
+      password: "jfalsjfasjf",
+    };
+
+    request(app)
+      .post("/api/register")
+      .send(user)
+      .expect(200)
+      .end(function (err, res) {
+        const { cod } = res.body;
+        cod.should.equal(400);
+        done();
+      });
+  })
+
+
+
 
 
 

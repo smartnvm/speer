@@ -66,7 +66,7 @@ module.exports = (router, dbo) => {
         const user = dbRes[0]
         if (user) {
           console.log('error: user already exisit')
-          res.json({ cod: 400, msg: `error user ${user.username} already exists` })
+          res.json({ cod: 400,  msg: `error user ${user.username} already exists` })
           return
         }
 
@@ -75,7 +75,7 @@ module.exports = (router, dbo) => {
           .then(newUser => {
             database.collection("users").insertOne(newUser);
             console.log('.......create user.........\n', newUser);
-            res.json({ code: 200, newUser });
+            res.json({ cod: 200,  newUser });
           })
       })
   });
